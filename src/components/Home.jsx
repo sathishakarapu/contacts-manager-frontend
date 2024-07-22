@@ -7,7 +7,8 @@ import img1 from '../components//Images/vector.png';
 import img2 from '../components/Images/group.png';
 import img4 from '../components/Images/profile.png';
 import Contacts from './Contacts';
-const apiUrl = "https://contact-manager-db17a144bd77.herokuapp.com";
+// const apiUrl = "https://contact-manager-db17a144bd77.herokuapp.com";
+const apiUrl = "https://contacts-manager-backend-ehw0.onrender.com";
 
 const Container = styled.div`
     width: 1728px;
@@ -218,7 +219,7 @@ const Home = () => {
     // verify the user and get the name by email id
     useEffect(() => {
         const token = getCookie('token');
-    
+
         if (!token) {
             navigate('/login');
         } else {

@@ -10,7 +10,9 @@ import img6 from '../components/Images/filter.png';
 import img7 from '../components/Images/delete.png';
 import img8 from '../components/Images/import.png';
 import img9 from '../components/Images/export.png';
-const apiUrl = "https://contact-manager-db17a144bd77.herokuapp.com";
+const apiUrl = "https://contacts-manager-backend-ehw0.onrender.com";
+
+// https://contact-manager-db17a144bd77.herokuapp.com
 
 
 const Table = styled.table`
@@ -324,44 +326,56 @@ const Contacts = () => {
   
   // export the contacts as a csv file
   const handleExportContacts = async () => {
-    //confirmation dialog
+    // Confirmation dialog
     const confirmed = window.confirm('Are you sure you want to export contacts?');
     
     // Check if user confirmed the action
     if (!confirmed) {
-        return;
+      return;
     }
     
     try {
-        const response = await axios.get(apiUrl+'/exportContacts', {
-            responseType: 'blob' // Important to receive file as blob
-        });
-
-        // Create a Blob from the response data
-        const blob = new Blob([response.data], { type: 'text/csv' });
-
-        // Create a URL for the Blob
-        const url = window.URL.createObjectURL(blob);
-
-        // Create a link element to trigger the download
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'contacts.csv'); // Specify the filename
-        document.body.appendChild(link);
-
-        // Trigger the download
-        link.click();
-
-        // Cleanup
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        
-        // Alert message after successful export
-        alert('Contacts exported successfully!');
+      // Get the token from localStorage or another source
+      const token = localStorage.getItem('token'); // or however you store your token
+      const userId = localStorage.getItem('userId'); // Get the userId from localStorage
+      
+      // Make the request with the Authorization header and userId as a query parameter
+      const response = await axios.get(apiUrl+'/exportContacts', {
+        params: {
+          userId: userId // Send the userId as a query parameter
+        },
+        headers: {
+          Authorization: `Bearer ${token}` // Include the token here
+        },
+        responseType: 'blob' // Important to receive file as blob
+      });
+  
+      // Create a Blob from the response data
+      const blob = new Blob([response.data], { type: 'text/csv' });
+  
+      // Create a URL for the Blob
+      const url = window.URL.createObjectURL(blob);
+  
+      // Create a link element to trigger the download
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'contacts.csv'); // Specify the filename
+      document.body.appendChild(link);
+  
+      // Trigger the download
+      link.click();
+  
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      // Alert message after successful export
+      alert('Contacts exported successfully!');
     } catch (error) {
-        console.error('Error exporting contacts:', error);
+      console.error('Error exporting contacts:', error);
     }
   };
+
 
   // delete the contacts which is selected
   const toggleSelectContact = (id) => {

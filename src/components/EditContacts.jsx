@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-const apiUrl = "https://contact-manager-db17a144bd77.herokuapp.com";
+const apiUrl = "https://contacts-manager-backend-ehw0.onrender.com";
 
 const EditContacts = ({ contactId, onComplete }) => {
   const [formData, setFormData] = useState({

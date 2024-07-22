@@ -2,7 +2,8 @@ import { React, useState } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-const apiUrl = "https://contact-manager-db17a144bd77.herokuapp.com";
+// const apiUrl = "https://contact-manager-db17a144bd77.herokuapp.com";
+const apiUrl = "https://contacts-manager-backend-ehw0.onrender.com";
 
 
 const Container = styled.div`
@@ -207,33 +208,40 @@ const Login = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
+      
         if (!email || !password) {
-            setMessage('Please enter all the required fields !')
-            return;
+          setMessage('Please enter all the required fields !')
+          return;
         }
-
+      
         try {
-            const response = await axios.post( apiUrl + '/login', {
-                email: email,
-                password: password
-            });
-
-            // If the request is successful (status code 2xx)
-            if (response.status >= 200 && response.status < 300) {
-                console.log('Login Successful');
-                // Set token in response cookie
-                document.cookie = `token=${response.data.token}; path=/;`;
-                navigate('/home'); // Redirect to home after successful login
-            } else {
-                // If the request is not successful (status code is not 2xx)
-                throw new Error('Login failed with status code ' + response.status);
-            }
+          const response = await axios.post(apiUrl + '/login', {
+            email: email,
+            password: password
+          });
+      
+          // If the request is successful (status code 2xx)
+          if (response.status >= 200 && response.status < 300) {
+            // Set token in response cookie
+            document.cookie = `token=${response.data.token}; path=/;`;
+            
+            // Store userId in localStorage
+            localStorage.setItem('userId', response.data.userId); // Assuming userId is returned in the response data
+            
+            navigate('/home'); // Redirect to home after successful login
+          } else {
+            // If the request is not successful (status code is not 2xx)
+            throw new Error('Login failed with status code ' + response.status);
+          }
         } catch (error) {
-            console.error("Error:", error.message);
-            setMessage('Username or password doesnot matched !');
+          console.error("Error:", error.message);
+          if (error.response && error.response.status === 401) {
+            setMessage('Invalid email or password.');
+          } else {
+            setMessage('An unexpected error occurred. Please try again.');
+          }
         }
-    }
+      }
 
 
     return (
